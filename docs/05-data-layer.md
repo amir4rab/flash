@@ -77,6 +77,7 @@ export interface UserRepository {
 - Avoid N+1 queries: use Drizzle's `with` relations or explicit joins.
 - Add indexes for columns used in `WHERE`, `ORDER BY`, and `JOIN` clauses. Indexes are declared in the schema.
 - Use `limit` on all list queries; pagination is mandatory (see `docs/04-api-design.md`).
+- Cursor-based (keyset) pagination needs an index on the sort key (e.g. `(createdAt, id)`) and a keyset predicate (`WHERE (createdAt, id) < (cursor)`) instead of `OFFSET`; see `docs/07-performance.md`.
 - Select only the columns you need; avoid `select *` in production code.
 - See `docs/07-performance.md` for more.
 

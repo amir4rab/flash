@@ -82,6 +82,28 @@ Every error response uses the same shape:
   - Query params: `page` (1-based) and `pageSize` (default 20, max 100).
   - Cursor-based pagination is preferred for large, append-only collections.
 
+#### Cursor-based pagination contract
+
+Cursor-based (keyset) pagination is the default for large or append-only collections. It is O(1) per page regardless of depth and does not skip or duplicate rows when the collection changes between requests. See `docs/07-performance.md` for when to choose it over offset pagination.
+
+- **Request params:** `cursor` (opaque token) and `limit` (default 20, max 100). The first request omits `cursor`.
+- **Response envelope:**
+
+```json
+{
+  "data": [],
+  "pagination": { "nextCursor": "eyJjcmVhdGVkQXQiOiIuLi4iLCJpZCI6Ii4uLiJ9", "hasMore": true }
+}
+```
+
+  - `nextCursor` is present only when there are more rows; `hasMore` mirrors that for convenience.
+  - When `hasMore` is `false`, the client stops requesting pages.
+
+- **Cursor encoding:** the cursor is opaque to the client — a base64url-encoded tuple of the sort key and the row `id` (e.g. `(createdAt, id)`). Never expose raw database values or accept a client-supplied sort key.
+- **Sorting:** cursor endpoints must be ordered by a stable, unique sort key — a timestamp plus the `id` as a tiebreaker (e.g. `ORDER BY createdAt DESC, id DESC`). The server derives the keyset predicate from the cursor; the client never constructs it.
+- **No `total`:** cursor pagination does not return a total count. If a count is required, expose it as a separate endpoint or field, never by scanning the whole collection per page.
+- **Backward compatibility:** `cursor`/`limit` are additive. An endpoint may support both offset and cursor modes, but a given endpoint should pick one and document it.
+
 - **Filtering** — use query params: `GET /users?role=admin&status=active`.
 - **Sorting** — use `sort` with a field and optional direction: `sort=-createdAt` (descending) or `sort=createdAt` (ascending).
 - **Field selection** — use `fields` to limit returned fields when payloads are large: `fields=id,name,email`.

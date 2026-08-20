@@ -8,12 +8,42 @@ This document defines the performance expectations every change must respect. Pe
 2. **Optimize the critical path.** Focus on what the user experiences: initial load, interaction latency, and perceived responsiveness.
 3. **Avoid premature optimization.** Write clear, correct code first; apply the techniques below where they matter.
 
+## High-impact, low-complexity techniques
+
+The techniques below give the largest performance wins for the least added complexity. They are framework-native or standard library features — no custom infrastructure required. Prefer them before reaching for anything more elaborate.
+
+### Cursor-based (keyset) pagination
+
+Offset pagination (`page`/`pageSize`) degrades as the collection grows: each deep page re-scans and discards `OFFSET` rows, so cost grows linearly with page depth. Cursor-based pagination filters on a stable sort key instead, so every page is O(1) — the database seeks directly to the cursor.
+
+- **When to use:** large or append-only collections, deep pagination, and any list where rows are added while users page through it (offset pagination can skip or duplicate rows in that case).
+- **When offset is fine:** small collections, admin tables, or any list where the user needs to jump to an arbitrary page number.
+- **How it works:** the client sends an opaque cursor; the server filters with a keyset predicate on a stable, unique sort key, e.g. `WHERE (createdAt, id) < (cursor)` ordered by `createdAt DESC, id DESC`. The `id` tiebreaker guarantees a total order even when sort keys collide.
+- **Requirements:** an index on the sort key (see `docs/05-data-layer.md`), and a stable sort order. The cursor contract lives in `docs/04-api-design.md`.
+- **Complexity note:** this is a query change plus an opaque token — no new infrastructure.
+
+### Route lazy-loading for SPAs
+
+Split the client bundle by route so the initial load ships only the code for the current route; sibling routes load on navigation. This is a framework-native feature (dynamic `import()` wired into the router), not custom code.
+
+- **When to use:** any SPA with more than a couple of routes. It is the default, not an optimization.
+- **Trade-off:** each route pays a small per-navigation fetch and a loading state; the initial bundle shrinks dramatically, which is usually the bigger win.
+- **Combine with prefetching:** prefetch the next likely route on hover or on visibility (e.g. link hover) so navigation feels instant without shipping everything up front.
+- **Complexity note:** one `import()` per route plus a loading fallback. Do not hand-roll a loader; use the router's built-in mechanism.
+
+### Other low-complexity wins
+
+- **Code-splitting by heavy dependency** — load large third-party libraries (charts, editors, date pickers) only where they are used, not in the shared bundle.
+- **Bundle budget in CI** — a hard budget (e.g. 200 KB gzipped initial JS) enforced by a bundle analyzer catches regressions automatically.
+- **Lazy-load images and below-the-fold components** — native `loading="lazy"` for images, and defer heavy components until they are near the viewport.
+- **Parallel data fetching** — use `Promise.all` for independent requests; never `await` sequentially when operations do not depend on each other.
+
 ## Frontend
 
 ### Bundle size
 
 - Set a bundle budget (e.g. 200 KB gzipped initial JS for the main route) and enforce it in CI with a bundle analyzer.
-- **Code splitting** — split by route and by heavy dependency. Load non-critical code lazily.
+- **Code splitting** — split by route and by heavy dependency. Load non-critical code lazily (see "Route lazy-loading for SPAs" above).
 - **Tree shaking** — import only what is used; avoid barrel files that pull in whole libraries.
 - **Dependency discipline** — a new dependency is a review decision. Prefer small, focused packages; avoid pulling in a large library for a small feature.
 
@@ -36,7 +66,7 @@ This document defines the performance expectations every change must respect. Pe
 
 - **Avoid N+1 queries.** Use joins or eager loading (see `docs/05-data-layer.md`).
 - **Index everything you filter or sort by.** Verify with `EXPLAIN` on slow queries.
-- **Paginate all list queries.** Never return unbounded result sets.
+- **Paginate all list queries.** Never return unbounded result sets. Prefer cursor-based pagination for large collections (see "Cursor-based (keyset) pagination" above).
 - **Select only needed columns.**
 - Use connection pooling; never open a new connection per request.
 

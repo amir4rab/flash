@@ -68,7 +68,7 @@ Document the choice in the app's README.
 - **Data fetching:** a typed client generated from the shared Zod schemas; never hand-typed fetch calls scattered through components.
 - **State:** server state in a cache (TanStack Query / SWR); client state minimal and local.
 - **i18n:** `i18next` + `react-i18next` (or the framework's equivalent), with typed keys from `packages/shared`.
-- **Routing:** framework-native router with lazy-loaded routes.
+- **Routing:** framework-native router with lazy-loaded routes (see `docs/07-performance.md`).
 
 ### The contract
 
