@@ -32,6 +32,7 @@ This repository does not contain an application. It contains the conventions, st
 | `docs/08-agent-workflow.md` | The mandatory agent workflow |
 | `docs/09-definition-of-done.md` | Checklist every change must satisfy |
 | `docs/10-stack-guidance.md` | Per-framework guidance for supported stacks |
+| `docs/11-code-organization.md` | Vertical DDD, feature slices, interfaces, DI |
 
 ## License
 

@@ -49,7 +49,7 @@ Two applications: a JSON API backend and a client-side SPA.
 - **Framework:** Hono or Fastify (typed, fast, schema-aware). Express is acceptable only if already established.
   - **Hono** — lightweight, TypeScript-first, edge-ready, minimal footprint. Prefer it when the API is small or may run on edge runtimes.
   - **Fastify** — richer plugin ecosystem and more established. Prefer it when the API is large or needs mature plugins.
-- **Structure:** routes → controllers → services → repositories (see `docs/05-data-layer.md`).
+- **Structure:** organized by feature (vertical DDD); each feature slice contains its route → controller → service → repository (see `docs/11-code-organization.md`).
 - **Validation:** Zod schemas from `packages/shared` at every route boundary.
 - **API:** REST per `docs/04-api-design.md`.
 - **Database:** Drizzle per `docs/05-data-layer.md`.
@@ -58,6 +58,7 @@ Two applications: a JSON API backend and a client-side SPA.
 ### Frontend (`apps/web`)
 
 - **Framework:** React with Vite.
+- **Structure:** organized by feature (vertical DDD); each feature folder owns its components, hooks, TanStack Query hooks, and typed API calls (see `docs/11-code-organization.md`).
 - **Routing:** TanStack Router with lazy-loaded routes (see `docs/07-performance.md`).
 - **Data fetching:** TanStack Query with a typed client generated from the shared Zod schemas; never hand-typed fetch calls scattered through components.
 - **State:** server state in the TanStack Query cache; client state minimal and local.

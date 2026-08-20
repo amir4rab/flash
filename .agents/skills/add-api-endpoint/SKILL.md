@@ -52,16 +52,24 @@ If this modifies an existing schema, field, or error code, load the
 
 ## 3. Layers
 
+Code is organized by feature (vertical DDD, see `docs/11-code-organization.md`).
+The endpoint's route, controller, service, and repository live **inside the
+feature slice** (`src/features/<feature>/`), not in top-level layer folders.
+
 **Pattern B (`apps/api`)** follows the structure
-route → controller → service → repository:
+route → controller → service → repository within the feature slice:
 
 - **Route** — HTTP concerns only: parse, validate, delegate, set status.
 - **Controller** — maps validated input to service calls and results to
   responses.
-- **Service** — business logic; depends on repositories, never on the
-  database directly.
+- **Service** — business logic; depends on the repository **interface**, never
+  on the database directly.
 - **Repository** — the only layer that touches Drizzle; typed methods, no
   Drizzle internals leaked upward. See `docs/05-data-layer.md`.
+
+Services and repositories declare interfaces; implementations are wired in the
+composition root (`src/composition-root.ts`). Never `new` a service or
+repository inside a route or controller — receive it through the constructor.
 
 **Pattern A** keeps the same discipline inside the framework's route
 handler: validate with Zod, call a service, never query the database from
@@ -143,6 +151,9 @@ Before considering the endpoint done, verify:
 - [ ] Zod schemas for request and response live in `packages/shared`.
 - [ ] Both server and client types derive from those schemas (`z.infer`).
 - [ ] Endpoint is under `/api/v1`, modeled around a resource.
+- [ ] Route, controller, service, and repository live inside the feature slice
+      (`src/features/<feature>/`), not in top-level layer folders.
+- [ ] Service and repository expose interfaces; wired in the composition root.
 - [ ] Correct success status code (`201` + `Location` for POST, `204` for
       DELETE).
 - [ ] All error responses use the standard envelope with stable codes.

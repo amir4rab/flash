@@ -36,7 +36,9 @@ Before writing tests, confirm:
 ## 2. Placement and naming
 
 - Tests live next to the code they test: `src/foo.test.ts` or
-  `src/foo.spec.ts`. No separate test directory.
+  `src/foo.spec.ts`. No separate test directory. In feature-organized apps,
+  tests live inside the feature slice (`src/features/<feature>/`), see
+  `docs/11-code-organization.md`.
 - Naming: `should <expected behavior> when <condition>`.
 
 ```ts
@@ -71,7 +73,7 @@ describe("UserService", () => {
 
 ### Services
 
-- Mock the repository interface, not the database.
+- Mock the repository **interface**, not the database or the implementation.
 - Cover the business rules: happy path, each branch, and each typed error.
 - Assert on the returned value and on what the service called on the
   repository (e.g. `create` called with the mapped input).

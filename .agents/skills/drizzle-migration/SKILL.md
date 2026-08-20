@@ -93,8 +93,10 @@ A schema change is not done at the migration step:
 
 - Update the repository interface and its typed methods
   (`findById`, `create`, ...) — Drizzle internals never leak past the
-  repository.
-- Update services only through repository signatures.
+  repository. The repository lives inside its feature slice
+  (`src/features/<feature>/repository.ts`, see `docs/11-code-organization.md`).
+- Update services only through repository signatures; implementations are
+  wired in the composition root.
 - Select only needed columns; keep `limit` on list queries.
 - Raw SQL only when the query builder cannot express the query, wrapped in a
   typed function with a documented reason.

@@ -54,6 +54,8 @@ export const users = pgTable("users", {
 - Repositories expose typed methods (`findById`, `findByEmail`, `create`, `update`, `delete`) and never leak Drizzle internals to callers.
 - Business logic lives in **services**; services depend on repositories, not on the database directly.
 - This keeps the data layer swappable and testable.
+- Repositories and services live **inside their feature slice** (see `docs/11-code-organization.md`), not in top-level `repositories/` or `services/` folders.
+- Every repository and service declares an **interface**; consumers depend on the interface, never the implementation. Implementations are wired to interfaces in the composition root (see `docs/11-code-organization.md`).
 
 ### Example
 

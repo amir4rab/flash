@@ -39,6 +39,7 @@ Every task follows this loop. Do not skip steps.
 | Agent workflow | `docs/08-agent-workflow.md` |
 | Definition of Done | `docs/09-definition-of-done.md` |
 | Framework-specific guidance | `docs/10-stack-guidance.md` |
+| Code organization, vertical DDD, DI | `docs/11-code-organization.md` |
 
 ## When to stop and ask
 

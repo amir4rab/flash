@@ -29,6 +29,8 @@ All projects built on this framework are **npm workspaces monorepos**. There is 
 - **No cross-app imports.** `apps/web` must never import from `apps/api` and vice versa. They communicate only through the API contract defined in `packages/shared`.
 - **Explicit boundaries.** Each package declares a public API surface (its `exports`). Anything not exported is internal and must not be imported by other packages.
 
+Code **inside** each app is organized by feature (vertical DDD), not by technical layer. See `docs/11-code-organization.md`.
+
 ## Supported application patterns
 
 The framework supports two patterns. Pick one per application and document the choice in the app's README.
