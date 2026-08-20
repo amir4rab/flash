@@ -33,21 +33,24 @@ All projects built on this framework are **npm workspaces monorepos**. There is 
 
 The framework supports two patterns. Pick one per application and document the choice in the app's README.
 
-### Pattern A — SSR framework
+### Pattern A — SSR (TanStack Start)
 
-A single application using a server-rendered framework: Next.js, SvelteKit, Nuxt, Remix, or Astro.
+A single application in `apps/web` using TanStack Start (TanStack Router with SSR).
 
 - Server and client live in one app; the framework owns routing and rendering.
-- Data access happens on the server (server components / loaders / server routes).
+- Data access happens on the server (loaders / server functions / server routes).
 - The client never talks to the database directly.
-- See `docs/10-stack-guidance.md` for per-framework conventions.
+- The API contract (Zod schemas, shared types) lives inside the app until a split is needed; it is not extracted to `packages/shared` speculatively.
+- See `docs/10-stack-guidance.md` for the stack conventions.
+
+**Evolution path.** Pattern A can evolve into Pattern B: when the data layer outgrows the app or a second client needs the API, `apps/web` becomes a rendering server, a new `apps/api` owns the data layer, and the contract moves to `packages/shared`. Data access is isolated behind services/repositories from day one so the split is a refactor, not a rewrite.
 
 ### Pattern B — JSON backend + SPA
 
 Two applications: a JSON API backend and a client-side SPA.
 
-- `apps/api` exposes a REST API (see `docs/04-api-design.md`).
-- `apps/web` is a SPA (React, Vue, or Svelte) that consumes the API.
+- `apps/api` exposes a REST API (see `docs/04-api-design.md`) using Hono or Fastify.
+- `apps/web` is a React SPA (Vite) that consumes the API.
 - The API contract (request/response schemas) lives in `packages/shared` and is the single source of truth for both sides.
 - The SPA must not import backend internals; it consumes the API over HTTP.
 

@@ -13,7 +13,7 @@ This document defines the tooling every project must use and the verification pi
 | Unit / integration tests | Vitest |
 | End-to-end tests | Playwright |
 | Runtime validation | Zod |
-| Build | Framework-native (Next.js, Vite, etc.) |
+| Build | Framework-native (TanStack Start, Vite, etc.) |
 
 ## Linting
 
