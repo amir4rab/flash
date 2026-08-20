@@ -1,6 +1,6 @@
 # 01 — Architecture
 
-This document defines the repository layout and the supported application patterns. Read it before creating or restructuring any package.
+This document defines the repository layout and the supported application patterns. Read it before creating or restructuring any package. For the step-by-step workflow of creating a new package, see the `add-package` skill.
 
 ## Monorepo
 
@@ -91,7 +91,8 @@ Create a new package when:
 - A package's public API is stable enough to be depended on.
 - The code has a clear, single responsibility.
 
-Do not create packages speculatively. Start in the app that needs the code and extract when the second consumer appears.
+Do not create packages speculatively — the second-consumer gate and the
+extraction workflow are in the `add-package` skill.
 
 ## Naming
 

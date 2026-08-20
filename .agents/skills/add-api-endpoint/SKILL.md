@@ -52,7 +52,7 @@ If this modifies an existing schema, field, or error code, load the
 
 ## 3. Layers
 
-Code is organized by feature (vertical DDD, see `docs/11-code-organization.md`).
+Code is organized by feature (vertical DDD, see `docs/11-code-organization.md` and the `add-feature-slice` skill).
 The endpoint's route, controller, service, and repository live **inside the
 feature slice** (`src/features/<feature>/`), not in top-level layer folders.
 

@@ -40,6 +40,7 @@ Every task follows this loop. Do not skip steps.
 | Definition of Done | `docs/09-definition-of-done.md` |
 | Framework-specific guidance | `docs/10-stack-guidance.md` |
 | Code organization, vertical DDD, DI | `docs/11-code-organization.md` |
+| Project types, first-party vs contracted | `docs/12-project-types.md` |
 
 ## When to stop and ask
 

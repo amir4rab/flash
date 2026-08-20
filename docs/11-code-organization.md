@@ -1,6 +1,6 @@
 # 11 — Code Organization
 
-This document defines how code is organized **inside** each application. It is the pattern specification for both supported stacks (see `docs/10-stack-guidance.md`). Read it before creating or restructuring any module inside an app.
+This document defines how code is organized **inside** each application. It is the pattern specification for both supported stacks (see `docs/10-stack-guidance.md`). Read it before creating or restructuring any module inside an app. For the step-by-step workflow of creating a feature slice, see the `add-feature-slice` skill.
 
 ## The organizing principle: vertical DDD
 
@@ -105,6 +105,8 @@ const userService: UserService = new UserServiceImpl(userRepository);
 - **Mock the interface, not the implementation.** Tests construct a fake `UserRepository` and pass it to the service under test (see `docs/03-tooling.md` and the `write-tests` skill).
 - **Per-feature tests.** Test files live next to the code they test, inside the feature folder.
 - **Repositories** are tested against a real database; **services** are tested with mocked repositories (see `docs/05-data-layer.md`).
+
+For the step-by-step workflow of creating a feature slice and its tests, see the `add-feature-slice` skill.
 
 ## Frontend (SPA and the client side of Pattern A)
 

@@ -38,7 +38,7 @@ Before writing tests, confirm:
 - Tests live next to the code they test: `src/foo.test.ts` or
   `src/foo.spec.ts`. No separate test directory. In feature-organized apps,
   tests live inside the feature slice (`src/features/<feature>/`), see
-  `docs/11-code-organization.md`.
+  `docs/11-code-organization.md` and the `add-feature-slice` skill.
 - Naming: `should <expected behavior> when <condition>`.
 
 ```ts

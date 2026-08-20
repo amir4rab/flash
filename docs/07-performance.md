@@ -4,7 +4,7 @@ This document defines the performance expectations every change must respect. Pe
 
 ## Principles
 
-1. **Measure before optimizing.** Never optimize without a measurement. Use profiling, bundle analysis, and load tests to find real bottlenecks.
+1. **Measure before optimizing.** Never optimize without a measurement. For the audit workflow and tooling, see the `performance-review` skill.
 2. **Optimize the critical path.** Focus on what the user experiences: initial load, interaction latency, and perceived responsiveness.
 3. **Avoid premature optimization.** Write clear, correct code first; apply the techniques below where they matter.
 
@@ -18,7 +18,7 @@ Offset pagination (`page`/`pageSize`) degrades as the collection grows: each dee
 
 - **When to use:** large or append-only collections, deep pagination, and any list where rows are added while users page through it (offset pagination can skip or duplicate rows in that case).
 - **When offset is fine:** small collections, admin tables, or any list where the user needs to jump to an arbitrary page number.
-- **How it works:** the client sends an opaque cursor; the server filters with a keyset predicate on a stable, unique sort key, e.g. `WHERE (createdAt, id) < (cursor)` ordered by `createdAt DESC, id DESC`. The `id` tiebreaker guarantees a total order even when sort keys collide.
+- **How it works:** the client sends an opaque cursor; the server filters with a keyset predicate on a stable, unique sort key. The `id` tiebreaker guarantees a total order even when sort keys collide. See the `performance-review` skill for the implementation.
 - **Requirements:** an index on the sort key (see `docs/05-data-layer.md`), and a stable sort order. The cursor contract lives in `docs/04-api-design.md`.
 - **Complexity note:** this is a query change plus an opaque token — no new infrastructure.
 
@@ -65,7 +65,7 @@ Split the client bundle by route so the initial load ships only the code for the
 ### Database
 
 - **Avoid N+1 queries.** Use joins or eager loading (see `docs/05-data-layer.md`).
-- **Index everything you filter or sort by.** Verify with `EXPLAIN` on slow queries.
+- **Index everything you filter or sort by.** Verify slow queries with `EXPLAIN` (see the `performance-review` skill).
 - **Paginate all list queries.** Never return unbounded result sets. Prefer cursor-based pagination for large collections (see "Cursor-based (keyset) pagination" above).
 - **Select only needed columns.**
 - Use connection pooling; never open a new connection per request.
@@ -92,7 +92,7 @@ Split the client bundle by route so the initial load ships only the code for the
 
 - Every app exposes metrics for: request latency (p50/p95/p99), error rate, and throughput.
 - Frontend: track Core Web Vitals (LCP, INP, CLS) in production.
-- Performance regressions are caught in CI where possible (bundle size budgets, load tests on critical routes).
+- Performance regressions are caught in CI where possible (bundle size budgets, load tests on critical routes). See the `performance-review` skill for the audit workflow.
 
 ## When to stop and ask
 
