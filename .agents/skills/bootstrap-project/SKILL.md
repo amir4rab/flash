@@ -41,7 +41,9 @@ type:
   evolve internal APIs, internal dependencies allowed.
 - **Contracted** — handover readiness: handover documentation set, self-
   containment rules, versioning and changelog discipline, licensing and
-  ownership notes.
+  ownership notes. The handover checklist must also include the private-IP
+  removal checklist and the git-history decision (see
+  `docs/12-project-types.md`).
 
 ## 3. Tailor the `docs/` folder
 

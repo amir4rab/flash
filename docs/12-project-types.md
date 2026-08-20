@@ -57,7 +57,27 @@ Because ownership may transfer to the customer, the emphasis is on documentation
 - **Licensing and ownership.** Clarify and document the ownership and licensing terms up front:
   - License headers where applicable.
   - Ownership-transfer notes: what is delivered, what is excluded, and what the customer may do with it.
-  - A handover checklist that is kept current as the project evolves.
+  - A handover checklist that is kept current as the project evolves, including the private-IP removal checklist and the git-history decision below.
+
+### Private IP removal (handover scrubbing)
+
+Before the codebase is transferred, remove everything that is internal to our org and not part of the deliverable. The customer must receive only what they need to run and maintain the product.
+
+- **Agent tooling.** Remove `.agents/` (skills, agent configs), `AGENTS.md`, and any agent-specific configuration (`.opencode/`, `opencode.json`). These encode our internal workflows, not the product.
+- **Internal process docs.** Remove or trim agent-process docs that do not describe the delivered system: `08-agent-workflow.md`, `09-definition-of-done.md`, and `12-project-types.md` (or the trimmed project-type record). Keep only docs that help the customer run and maintain the product.
+- **Internal references.** Remove internal-only URLs, credentials, service names, and infrastructure references from code, configs, and docs.
+- **CI/CD configs.** Remove or rewrite CI/CD configs that reference internal infrastructure, credentials, or services the customer cannot access.
+- **Internal naming.** Replace internal org scopes and package names (e.g. `@acme/...`) with names the customer owns.
+- **ADRs.** Keep only decision records that explain product-relevant choices; remove those that reveal internal process or trade-offs not relevant to the customer.
+- **Framework residue.** Remove framework docs and conventions that do not apply to the delivered project (see the `bootstrap-project` skill for tailoring).
+
+### Git history
+
+By default, deliver a **clean repository**: a fresh repo containing the final state, or a squashed history. The full development history is not part of the deliverable and typically reveals internal process, timelines, and mistakes.
+
+- **Default — clean repo.** The customer receives the final state without the development history.
+- **Full history only when the contract requires it.** If the contract demands auditability or traceability, the history must be scrubbed first (e.g. with `git filter-repo`) — secrets and internal references persist in history even after they are removed from the working tree.
+- **Record the decision.** The handover notes must state which option was chosen and, if history is delivered, how it was scrubbed.
 
 ## Bootstrapping a project
 
